@@ -1,6 +1,6 @@
 ﻿namespace QuanLyBanHang.Forms
 {
-    partial class FrmLoaiSanPham
+    partial class frmLoaiSanPham
     {
         /// <summary>
         /// Required designer variable.
@@ -71,6 +71,7 @@
             btnThoat.TabIndex = 7;
             btnThoat.Text = "Thoát";
             btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.Click += btnThoat_Click;
             // 
             // btnHuyBo
             // 
@@ -80,6 +81,7 @@
             btnHuyBo.TabIndex = 6;
             btnHuyBo.Text = "Hủy bỏ";
             btnHuyBo.UseVisualStyleBackColor = true;
+            btnHuyBo.Click += btnHuyBo_Click;
             // 
             // btnLuu
             // 
@@ -90,6 +92,7 @@
             btnLuu.TabIndex = 5;
             btnLuu.Text = "Lưu";
             btnLuu.UseVisualStyleBackColor = true;
+            btnLuu.Click += btnLuu_Click;
             // 
             // btnXoa
             // 
@@ -100,6 +103,7 @@
             btnXoa.TabIndex = 4;
             btnXoa.Text = "Xóa";
             btnXoa.UseVisualStyleBackColor = true;
+            btnXoa.Click += btnXoa_Click;
             // 
             // btnSua
             // 
@@ -109,6 +113,7 @@
             btnSua.TabIndex = 3;
             btnSua.Text = "Sửa";
             btnSua.UseVisualStyleBackColor = true;
+            btnSua.Click += btnSua_Click;
             // 
             // btnThem
             // 
@@ -118,6 +123,7 @@
             btnThem.TabIndex = 2;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = true;
+            btnThem.Click += btnThem_Click;
             // 
             // txtTenLoai
             // 
@@ -174,15 +180,16 @@
             TenLoai.HeaderText = "Tên Loại Sản Phẩm";
             TenLoai.Name = "TenLoai";
             // 
-            // FrmLoaiSanPham
+            // frmLoaiSanPham
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(750, 450);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
-            Name = "FrmLoaiSanPham";
+            Name = "frmLoaiSanPham";
             Text = "Loại sản phẩm";
+            Load += FrmLoaiSanPham_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);

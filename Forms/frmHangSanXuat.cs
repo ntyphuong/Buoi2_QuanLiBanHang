@@ -13,13 +13,15 @@ namespace QuanLyBanHang.Forms
 {
     public partial class frmHangSanXuat : Form
     {
-        QLBHDbContext context = new QLBHDbContext(); // Khởi tạo biến ngữ cảnh CSDL 
-        bool xuLyThem = false; // Kiểm tra có nhấn vào nút Thêm hay không? 
-        int id; 
+        QLBHDbContext context = new QLBHDbContext();
+        bool xuLyThem = false;
+        int id;
+
         public frmHangSanXuat()
         {
             InitializeComponent();
         }
+
         private void BatTatChucNang(bool giaTri)
         {
             btnLuu.Enabled = giaTri;
@@ -31,48 +33,54 @@ namespace QuanLyBanHang.Forms
             btnXoa.Enabled = !giaTri;
         }
 
-
-
         private void frmHangSanXuat_Load(object sender, EventArgs e)
         {
             BatTatChucNang(false);
 
-            List<LoaiSanPham> lsp = new List<LoaiSanPham>();
-            lsp = context.LoaiSanPham.ToList();
+            // SỬA: Thay LoaiSanPham bằng HangSanXuat
+            List<HangSanXuat> hsx = context.HangSanXuat.ToList();
 
             BindingSource bindingSource = new BindingSource();
-            bindingSource.DataSource = lsp;
+            bindingSource.DataSource = hsx;
 
             txtTenHangSanXuat.DataBindings.Clear();
+            // SỬA: Trường bind phải là "TenHangSanXuat"
             txtTenHangSanXuat.DataBindings.Add("Text", bindingSource, "TenHangSanXuat", false, DataSourceUpdateMode.Never);
 
             dataGridView.DataSource = bindingSource;
         }
+
         private void btnThem_Click(object sender, EventArgs e)
         {
             xuLyThem = true;
             BatTatChucNang(true);
             txtTenHangSanXuat.Clear();
+            txtTenHangSanXuat.Focus();
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
+            if (dataGridView.CurrentRow == null) return;
+
             xuLyThem = false;
             BatTatChucNang(true);
-            id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value.ToString());
+            id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value);
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Xác nhận xóa loại sản phẩm?", "Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (dataGridView.CurrentRow == null) return;
+
+            if (MessageBox.Show("Xác nhận xóa hãng sản xuất?", "Xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value.ToString());
-                LoaiSanPham lsp = context.LoaiSanPham.Find(id);
-                if (lsp != null)
+                id = Convert.ToInt32(dataGridView.CurrentRow.Cells["ID"].Value);
+                // SỬA: Tìm trong bảng HangSanXuats
+                HangSanXuat hsx = context.HangSanXuat.Find(id);
+                if (hsx != null)
                 {
-                    context.LoaiSanPham.Remove(lsp);
+                    context.HangSanXuat.Remove(hsx);
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
 
                 frmHangSanXuat_Load(sender, e);
             }
@@ -81,31 +89,31 @@ namespace QuanLyBanHang.Forms
         private void btnLuu_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtTenHangSanXuat.Text))
-                MessageBox.Show("Vui lòng nhập tên loại sản phẩm?", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            {
+                MessageBox.Show("Vui lòng nhập tên hãng sản xuất?", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (xuLyThem)
+            {
+                // SỬA: Tạo mới HangSanXuat
+                HangSanXuat hsx = new HangSanXuat();
+                hsx.TenHangSanXuat = txtTenHangSanXuat.Text;
+                context.HangSanXuat.Add(hsx);
+            }
             else
             {
-                if (xuLyThem)
+                // SỬA: Cập nhật HangSanXuat
+                HangSanXuat hsx = context.HangSanXuat.Find(id);
+                if (hsx != null)
                 {
-                    LoaiSanPham lsp = new LoaiSanPham();
-                    lsp.TenLoai = txtTenHangSanXuat.Text;
-                    context.LoaiSanPham.Add(lsp);
-
-                    context.SaveChanges();
+                    hsx.TenHangSanXuat = txtTenHangSanXuat.Text;
+                    context.HangSanXuat.Update(hsx);
                 }
-                else
-                {
-                    LoaiSanPham lsp = context.LoaiSanPham.Find(id);
-                    if (lsp != null)
-                    {
-                        lsp.TenLoai = txtTenHangSanXuat.Text;
-                        context.LoaiSanPham.Update(lsp);
-
-                        context.SaveChanges();
-                    }
-                }
-
-                frmHangSanXuat_Load(sender, e);
             }
+
+            context.SaveChanges();
+            frmHangSanXuat_Load(sender, e);
         }
 
         private void btnHuyBo_Click(object sender, EventArgs e)
